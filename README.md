@@ -84,4 +84,4 @@ The test suite validates that:
 
 The interactive Next.js application has been deployed to **Vercel** so that anyone can view and interact with the loading console live.
 
-**Live Deployment URL:** [https://adnoc-sulfer-rail.vercel.app](https://adnoc-sulfer-rail.vercel.app) *(or updated deployment URL)*
+**Live Deployment URL:** [https://web-ruddy-two-80.vercel.app](https://web-ruddy-two-80.vercel.app)
