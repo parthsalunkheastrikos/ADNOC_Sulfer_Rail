@@ -1,0 +1,9 @@
+# Node / Next.js app lives in web/ — its own .gitignore covers node_modules,
+# .next, .env*, etc. This root file catches anything at the top level.
+web/node_modules/
+web/.next/
+web/out/
+*.tsbuildinfo
+.env*
+.DS_Store
+Thumbs.db

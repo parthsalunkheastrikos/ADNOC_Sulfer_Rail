@@ -1,0 +1,313 @@
+@import "tailwindcss";
+
+/*
+  ISA-101 high-performance HMI theme (docs/03_UIUX_Design_Specification.md §6).
+  Grayscale-dominant; color reserved for abnormality and mode/authority.
+  Default: night (dark) theme. [data-theme="light"] provides the day theme.
+*/
+
+:root {
+  color-scheme: dark;
+
+  /* base surfaces — "Desert Night": 2° warmer and slightly deeper than the
+     original neutral grays, still firmly ISA-101 gray-dominant (2026-07-17
+     theme refresh). */
+  --bg-base: #141518;
+  --bg-raised: #22252b;
+  --bg-sunken: #0e0f12;
+  --bg-panel: #1a1c21;
+  --bg-hover: #2c3038;
+  --border-subtle: #2e323a;
+  --border-strong: #4d545e;
+  --shadow-color: 220 25% 2%;
+
+  /* ink */
+  --ink-primary: #e8eaed;
+  --ink-secondary: #9aa1ab;
+  --ink-tertiary: #6b7280;
+  --ink-inverse: #1e2126;
+
+  /* mode / authority identity */
+  --mode-auto: #1b5faa;
+  --mode-auto-ink: #ffffff;
+  --mode-advisory: #2c8c86;
+  --mode-advisory-ink: #ffffff;
+  --mode-manual: #e8a13d;
+  --mode-manual-ink: #1e2126;
+  --mode-fallback: #c0392b;
+  --mode-fallback-ink: #ffffff;
+  --mode-monitor: #5b6470;
+  --mode-monitor-ink: #ffffff;
+
+  /* alarms — reserved exclusively for abnormality */
+  --alarm-critical: #c0392b;
+  --alarm-high: #d9822b;
+  --alarm-medium: #d3c22a;
+  --alarm-low: #7b8391;
+
+  /* data quality */
+  --quality-stale-overlay: rgba(120, 126, 136, 0.4);
+
+  /* process series (single hue family, dataviz standard) */
+  --series-primary: #6fb3e0;
+  --series-secondary: #3d84b8;
+  --series-plan: #a9d4f0;
+  --series-tertiary: #8f9bb3;
+
+  /* sulfur material identity — the one deliberate non-mode, non-alarm hue on
+     this grayscale-dominant HMI (docs audit 2026-07-16 Phase 3 §1). Used
+     only for rendering the material itself (train canvas pile) and the
+     product wordmark accent — never for status. */
+  --sulfur-base: #d9a839;
+  --sulfur-highlight: #f0cf74;
+  --sulfur-shadow: #9c761f;
+
+  /* brand accent (2026-07-17 theme refresh) — the sulfur hue promoted to a
+     first-class token: wordmark bar, active-nav underline, focus rings,
+     primary buttons, gauge fills, positive hero deltas. Same value as
+     --sulfur-base by design (material identity IS the brand), but a
+     distinct token so callers express intent ("this is brand color") not
+     coincidence. Never used on status/alarm text — that stays alarm/mode tokens. */
+  --accent: #d9a839;
+  --accent-ink: #1e2126;
+
+  /* AI Copilot identity — soft violet, deliberately distinct from both the
+     gold brand accent and every mode/alarm hue, so Sparkle icons and
+     "Ask AI" affordances and the Copilot panel never borrow --mode-auto's
+     blue, which means specifically and only "the AI is driving the plant"
+     (never true in Phase A advisory mode). */
+  --ai-accent: #8b7cf0;
+  --ai-accent-ink: #ffffff;
+
+  --font-ui: var(--font-plex-sans), "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  /* real font stack for <canvas> ctx.font — CSS custom properties are not resolved there */
+  --font-mono-canvas: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --font-ui-canvas: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg-base: #e6e8eb;
+  --bg-raised: #fbfbfc;
+  --bg-sunken: #d7dade;
+  --bg-panel: #f2f3f5;
+  --bg-hover: #dde0e4;
+  --border-subtle: #c2c6cc;
+  --border-strong: #9aa0a9;
+  --shadow-color: 220 20% 55%;
+
+  --ink-primary: #14171b;
+  --ink-secondary: #40454d;
+  --ink-tertiary: #666d77;
+  --ink-inverse: #e8eaed;
+
+  --series-primary: #1b5faa;
+  --series-secondary: #0d3f78;
+  --series-plan: #5f9bd6;
+  --series-tertiary: #5b6470;
+
+  --sulfur-base: #b9871f;
+  --sulfur-highlight: #d9a839;
+  --sulfur-shadow: #7d5c14;
+
+  --accent: #b9871f;
+  --accent-ink: #ffffff;
+  /* darker/more saturated than the dark-theme violet, for AA contrast on light surfaces */
+  --ai-accent: #6f5bd6;
+  --ai-accent-ink: #ffffff;
+}
+
+@theme inline {
+  --color-bg-base: var(--bg-base);
+  --color-bg-raised: var(--bg-raised);
+  --color-bg-sunken: var(--bg-sunken);
+  --color-bg-panel: var(--bg-panel);
+  --color-bg-hover: var(--bg-hover);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+
+  --color-ink-primary: var(--ink-primary);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-tertiary: var(--ink-tertiary);
+  --color-ink-inverse: var(--ink-inverse);
+
+  --color-mode-auto: var(--mode-auto);
+  --color-mode-advisory: var(--mode-advisory);
+  --color-mode-manual: var(--mode-manual);
+  --color-mode-fallback: var(--mode-fallback);
+  --color-mode-monitor: var(--mode-monitor);
+
+  --color-alarm-critical: var(--alarm-critical);
+  --color-alarm-high: var(--alarm-high);
+  --color-alarm-medium: var(--alarm-medium);
+  --color-alarm-low: var(--alarm-low);
+
+  --color-series-primary: var(--series-primary);
+  --color-series-secondary: var(--series-secondary);
+  --color-series-plan: var(--series-plan);
+  --color-series-tertiary: var(--series-tertiary);
+
+  --color-sulfur-base: var(--sulfur-base);
+  --color-sulfur-highlight: var(--sulfur-highlight);
+  --color-sulfur-shadow: var(--sulfur-shadow);
+
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-ai-accent: var(--ai-accent);
+  --color-ai-accent-ink: var(--ai-accent-ink);
+
+  --font-sans: var(--font-ui);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--ink-primary);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* tabular figures for control-critical numeric values — no jitter */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
+
+/* ---- type roles ------------------------------------------------------ */
+/* small mono/uppercase eyebrow used for panel headers & section labels */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-tertiary);
+}
+
+/* large tabular figure for hero/instrument-panel metrics */
+.hero-figure {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+/* tinted elevation shadow instead of a flat generic black blur */
+.panel-shadow {
+  box-shadow: 0 1px 2px hsl(var(--shadow-color) / 0.3), 0 8px 20px -6px hsl(var(--shadow-color) / 0.45);
+}
+
+.quality-stale {
+  filter: saturate(0.6) opacity(0.65);
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(120, 126, 136, 0.18),
+    rgba(120, 126, 136, 0.18) 4px,
+    transparent 4px,
+    transparent 9px
+  );
+}
+
+@keyframes flash-critical {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.35;
+  }
+}
+
+.flash-critical {
+  animation: flash-critical 500ms steps(1, end) infinite;
+}
+
+@keyframes pulse-border {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 2px var(--alarm-critical);
+  }
+  50% {
+    box-shadow: inset 0 0 0 2px transparent;
+  }
+}
+
+.pulse-border {
+  animation: pulse-border 500ms steps(1, end) infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.live-dot {
+  animation: breathe 2.4s ease-in-out infinite;
+}
+
+@keyframes veil-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.veil-in {
+  animation: veil-in 200ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot {
+    animation: none;
+  }
+  .veil-in {
+    animation: none;
+  }
+  /* Unacked-CRITICAL flashing is exactly what photosensitive users need
+     stopped — swap to a steady high-contrast state instead of just turning
+     the animation off silently, so the alarm is still unmistakably visible. */
+  .flash-critical {
+    animation: none;
+    opacity: 1;
+  }
+  .pulse-border {
+    animation: none;
+    box-shadow: inset 0 0 0 2px var(--alarm-critical);
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-sunken);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 6px;
+}
